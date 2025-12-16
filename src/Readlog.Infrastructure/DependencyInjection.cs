@@ -22,10 +22,11 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
         {
             var auditableInterceptor = sp.GetRequiredService<AuditableEntityInterceptor>();
+            var softDeleteInterceptor = sp.GetRequiredService<SoftDeleteInterceptor>();
             var domainEventInterceptor = sp.GetRequiredService<DomainEventInterceptor>();
 
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
-                .AddInterceptors(auditableInterceptor, domainEventInterceptor);
+                .AddInterceptors(auditableInterceptor, softDeleteInterceptor, domainEventInterceptor);
         });
         
         services.AddIdentityCore<ApplicationUser>(options =>

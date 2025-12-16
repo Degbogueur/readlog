@@ -7,21 +7,28 @@ using Readlog.Api.Responses;
 using Readlog.Application.Features.Books.Commands;
 using Readlog.Application.Features.Books.DTOs;
 using Readlog.Application.Features.Books.Queries;
+using Readlog.Application.Shared;
 
 namespace Readlog.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/books")]
 [Authorize]
 public class BooksController(
     ISender sender) : ControllerBase
 {
     [HttpGet]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(IReadOnlyList<BookResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(PagedResult<BookResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAll(
+        [FromQuery] string? search,
+        [FromQuery] string? sortBy,
+        [FromQuery] bool sortDescending = false,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
     {
-        var query = new GetAllBooksQuery();
+        var query = new GetAllBooksQuery(search, sortBy, sortDescending, page, pageSize);
         var result = await sender.Send(query, cancellationToken);
 
         return result.ToActionResult();

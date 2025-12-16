@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Readlog.Api.Requests.Authentication;
-using Readlog.Api.Responses;
 using Readlog.Api.Responses.Authentication;
 using Readlog.Application.Abstractions;
 
 namespace Readlog.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/auth")]
 public class AuthController(
     IAuthenticationService authenticationService) : ControllerBase
 {

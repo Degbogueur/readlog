@@ -7,6 +7,7 @@ using Readlog.Api.Responses;
 using Readlog.Application.Features.ReadingLists.Commands;
 using Readlog.Application.Features.ReadingLists.DTOs;
 using Readlog.Application.Features.ReadingLists.Queries;
+using Readlog.Application.Shared;
 
 namespace Readlog.Api.Controllers;
 
@@ -17,10 +18,16 @@ public class ReadingListsController(
     ISender sender) : ControllerBase
 {
     [HttpGet]
-    [ProducesResponseType(typeof(IReadOnlyList<ReadingListResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetUserReadingLists(CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(PagedResult<ReadingListResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetUserReadingLists(
+        [FromQuery] string? search,
+        [FromQuery] string? sortBy,
+        [FromQuery] bool sortDescending = false,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10, 
+        CancellationToken cancellationToken = default)
     {
-        var query = new GetUserReadingListsQuery();
+        var query = new GetUserReadingListsQuery(search, sortBy, sortDescending, page, pageSize);
         var result = await sender.Send(query, cancellationToken);
 
         return result.ToActionResult();

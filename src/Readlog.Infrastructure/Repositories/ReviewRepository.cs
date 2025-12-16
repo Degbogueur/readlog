@@ -1,25 +1,52 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Readlog.Application.Extensions;
 using Readlog.Domain.Abstractions;
 using Readlog.Domain.Entities;
 using Readlog.Infrastructure.Data;
+using System.Linq.Expressions;
 
 namespace Readlog.Infrastructure.Repositories;
 
 public class ReviewRepository(
     ApplicationDbContext dbContext) : IReviewRepository
 {
+    private static readonly Dictionary<string, Expression<Func<Review, object>>> SortMappings = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["rating"] = r => r.Rating.Value,
+        ["title"] = r => r.Title,
+        ["createdAt"] = r => r.CreatedAt
+    };
+
     public async Task<Review?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await dbContext.Reviews
             .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<Review>> GetByBookIdAsync(Guid bookId, CancellationToken cancellationToken = default)
+    public async Task<(IReadOnlyList<Review> Items, int TotalCount)> GetByBookIdAsync(
+        Guid bookId, 
+        string? sortBy,
+        bool sortDescending,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default)
     {
-        return await dbContext.Reviews
-            .Where(r => r.BookId == bookId)
-            .OrderByDescending(r => r.CreatedAt)
+        var query = dbContext.Reviews
+            .Where(r => r.BookId == bookId);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        query = query.ApplySort(
+            sortBy,
+            sortDescending,
+            SortMappings,
+            r => r.CreatedAt);
+
+        var items = await query
+            .ApplyPagination(page, pageSize)
             .ToListAsync(cancellationToken);
+
+        return (items, totalCount);
     }
 
     public async Task<Review?> GetByBookAndUserAsync(Guid bookId, Guid userId, CancellationToken cancellationToken = default)

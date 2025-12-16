@@ -7,21 +7,28 @@ using Readlog.Api.Responses;
 using Readlog.Application.Features.Reviews.Commands;
 using Readlog.Application.Features.Reviews.DTOs;
 using Readlog.Application.Features.Reviews.Queries;
+using Readlog.Application.Shared;
 
 namespace Readlog.Api.Controllers;
 
 [ApiController]
-[Route("api/books/{bookId:guid}/[controller]")]
+[Route("api/books/{bookId:guid}/reviews")]
 [Authorize]
 public class ReviewsController(
     ISender sender) : ControllerBase
 {
     [HttpGet]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(IReadOnlyList<ReviewResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetByBookId(Guid bookId, CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(PagedResult<ReviewResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetByBookId(
+        Guid bookId,
+        [FromQuery] string? sortBy,
+        [FromQuery] bool sortDescending = false,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
     {
-        var query = new GetReviewsByBookIdQuery(bookId);
+        var query = new GetReviewsByBookIdQuery(bookId, sortBy, sortDescending, page, pageSize);
         var result = await sender.Send(query, cancellationToken);
 
         return result.ToActionResult();
