@@ -36,8 +36,16 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
         builder.Property(r => r.CreatedBy)
             .IsRequired();
 
+        builder.Property(r => r.IsDeleted)
+            .IsRequired()
+            .HasDefaultValue(false);
+
+        builder.HasQueryFilter(r => !r.IsDeleted);
+
         builder.HasIndex(r => r.BookId);
         builder.HasIndex(r => r.CreatedBy);
-        builder.HasIndex(r => new { r.BookId, r.CreatedBy }).IsUnique();
+        builder.HasIndex(r => r.IsDeleted);
+        builder.HasIndex(r => new { r.BookId, r.CreatedBy }).IsUnique()
+            .HasFilter("IsDeleted = 0");
     }
 }

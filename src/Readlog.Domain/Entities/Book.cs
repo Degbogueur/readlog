@@ -5,7 +5,7 @@ using Readlog.Domain.ValueObjects;
 
 namespace Readlog.Domain.Entities;
 
-public sealed class Book : AggregateRoot, IAuditable
+public sealed class Book : AggregateRoot, IAuditable, ISoftDeletable
 {
     public string Title { get; private set; } = string.Empty;
     public string Author { get; private set; } = string.Empty;
@@ -16,6 +16,9 @@ public sealed class Book : AggregateRoot, IAuditable
     public Guid CreatedBy { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public Guid? UpdatedBy { get; set; }
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedAt { get; set; }
+    public Guid? DeletedBy { get; set; }
 
     private Book() { }
 

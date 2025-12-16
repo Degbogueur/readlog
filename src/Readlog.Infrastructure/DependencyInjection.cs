@@ -16,6 +16,7 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         services.AddScoped<AuditableEntityInterceptor>();
+        services.AddScoped<SoftDeleteInterceptor>();
         services.AddScoped<DomainEventInterceptor>();
 
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
