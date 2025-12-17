@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Readlog.Application.Behaviors;
 
@@ -13,8 +14,9 @@ public static class DependencyInjection
         services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssemblies(assembly);
-            config.AddBehavior(typeof(ValidationBehavior<,>));
         });
+
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
         services.AddValidatorsFromAssembly(assembly);
 

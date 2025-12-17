@@ -5,7 +5,7 @@ using Readlog.Domain.ValueObjects;
 
 namespace Readlog.Domain.Entities;
 
-public sealed class Review : AggregateRoot, IAuditable
+public sealed class Review : AggregateRoot, IAuditable, ISoftDeletable
 {
     public Guid BookId { get; private set; }
     public Rating Rating { get; private set; } = null!;
@@ -15,6 +15,9 @@ public sealed class Review : AggregateRoot, IAuditable
     public Guid CreatedBy { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public Guid? UpdatedBy { get; set; }
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedAt { get; set; }
+    public Guid? DeletedBy { get; set; }
 
     private Review() { }
 

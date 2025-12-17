@@ -12,6 +12,10 @@ public interface IAuthenticationService
         string? lastName);
 
     Task<AuthenticationResult> LoginAsync(
-        string login,
+        string emailOrUserName,
         string password);
+
+    Task<AuthenticationResult> RefreshTokenAsync(string refreshToken);
+
+    Task<bool> RevokeTokenAsync(string refreshToken);
 }

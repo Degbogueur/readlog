@@ -39,6 +39,13 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
         builder.Property(b => b.CreatedBy)
             .IsRequired();
 
+        builder.Property(b => b.IsDeleted)
+            .IsRequired()
+            .HasDefaultValue(false);
+
+        builder.HasQueryFilter(b => !b.IsDeleted);
+
         builder.HasIndex(b => b.CreatedBy);
+        builder.HasIndex(b => b.IsDeleted);
     }
 }

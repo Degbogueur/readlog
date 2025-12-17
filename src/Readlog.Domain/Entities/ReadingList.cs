@@ -5,7 +5,7 @@ using Readlog.Domain.Exceptions;
 
 namespace Readlog.Domain.Entities;
 
-public sealed class ReadingList : AggregateRoot, IAuditable
+public sealed class ReadingList : AggregateRoot, IAuditable, ISoftDeletable
 {
     private readonly List<ReadingListItem> _items = [];
 
@@ -14,6 +14,9 @@ public sealed class ReadingList : AggregateRoot, IAuditable
     public Guid CreatedBy { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public Guid? UpdatedBy { get; set; }
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedAt { get; set; }
+    public Guid? DeletedBy { get; set; }
     public IReadOnlyCollection<ReadingListItem> Items => _items.AsReadOnly();
 
     private ReadingList() { }

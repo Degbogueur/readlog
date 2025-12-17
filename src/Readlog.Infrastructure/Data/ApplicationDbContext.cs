@@ -18,6 +18,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<Review> Reviews => Set<Review>();
     public DbSet<ReadingList> ReadingLists => Set<ReadingList>();
     public DbSet<ReadingListItem> ReadingListItems => Set<ReadingListItem>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

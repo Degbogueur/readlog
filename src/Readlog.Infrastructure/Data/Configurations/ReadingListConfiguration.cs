@@ -22,6 +22,12 @@ public class ReadingListConfiguration : IEntityTypeConfiguration<ReadingList>
         builder.Property(rl => rl.CreatedBy)
             .IsRequired();
 
+        builder.Property(rl => rl.IsDeleted)
+            .IsRequired()
+            .HasDefaultValue(false);
+
+        builder.HasQueryFilter(rl => !rl.IsDeleted);
+
         builder.HasMany(rl => rl.Items)
             .WithOne()
             .HasForeignKey("ReadingListId")
@@ -31,5 +37,6 @@ public class ReadingListConfiguration : IEntityTypeConfiguration<ReadingList>
             .UsePropertyAccessMode(PropertyAccessMode.Field);
 
         builder.HasIndex(rl => rl.CreatedBy);
+        builder.HasIndex(rl => rl.IsDeleted);
     }
 }

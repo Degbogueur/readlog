@@ -5,16 +5,27 @@ using Readlog.Domain.Abstractions;
 
 namespace Readlog.Application.Features.Reviews.Queries;
 
-public sealed record GetReviewsByBookIdQuery(Guid BookId) : IQuery<IReadOnlyList<ReviewResponse>>;
+public sealed record GetReviewsByBookIdQuery(
+    Guid BookId,
+    string? SortBy = null,
+    bool SortDescending = false,
+    int Page = 1,
+    int PageSize = 10) : IQuery<PagedResult<ReviewResponse>>;
 
 public sealed class GetReviewsByBookIdQueryHandler(
-    IReviewRepository reviewRepository) : IQueryHandler<GetReviewsByBookIdQuery, IReadOnlyList<ReviewResponse>>
+    IReviewRepository reviewRepository) : IQueryHandler<GetReviewsByBookIdQuery, PagedResult<ReviewResponse>>
 {
-    public async Task<Result<IReadOnlyList<ReviewResponse>>> Handle(GetReviewsByBookIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PagedResult<ReviewResponse>>> Handle(GetReviewsByBookIdQuery request, CancellationToken cancellationToken)
     {
-        var reviews = await reviewRepository.GetByBookIdAsync(request.BookId, cancellationToken);
+        var (reviews, totalCount) = await reviewRepository.GetByBookIdAsync(
+            request.BookId,
+            request.SortBy,
+            request.SortDescending,
+            request.Page,
+            request.PageSize,
+            cancellationToken);
 
-        var response = reviews.Select(review => new ReviewResponse(
+        var items = reviews.Select(review => new ReviewResponse(
             review.Id,
             review.BookId,
             review.Rating.Value,
@@ -22,9 +33,14 @@ public sealed class GetReviewsByBookIdQueryHandler(
             review.Content,
             review.CreatedAt,
             review.CreatedBy,
-            review.UpdatedAt
-        )).ToList();
+            review.UpdatedAt)).ToList();
 
-        return Result.Success<IReadOnlyList<ReviewResponse>>(response);
+        var pagedResult = new PagedResult<ReviewResponse>(
+            items,
+            totalCount,
+            request.Page,
+            request.PageSize);
+
+        return Result.Success(pagedResult);
     }
 }

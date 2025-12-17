@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Readlog.Application.Shared;
 using Readlog.Domain.Abstractions;
 
 namespace Readlog.Infrastructure.Interceptors;
