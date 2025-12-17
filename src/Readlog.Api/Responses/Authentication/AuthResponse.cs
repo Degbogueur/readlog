@@ -1,5 +1,6 @@
 ﻿namespace Readlog.Api.Responses.Authentication;
 
 public sealed record AuthResponse(
-    string Token,
+    string AccessToken,
+    string RefreshToken,
     DateTime ExpiresAt);
