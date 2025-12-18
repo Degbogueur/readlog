@@ -251,7 +251,7 @@ public class ReadingListsControllerTests(IntegrationTestFixture fixture) : IAsyn
 
         // Act
         var response = await authenticatedClient.PutAsJsonAsync(
-            $"/api/reading-lists/{list.Id}/books/{book.Id}", updateRequest);
+            $"/api/reading-lists/{list.Id}/books/{book.Id}/status", updateRequest);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);

@@ -12,6 +12,9 @@ public class ReadingListItemConfiguration : IEntityTypeConfiguration<ReadingList
 
         builder.HasKey(rli => rli.Id);
 
+        builder.Property(rli => rli.Id)
+            .ValueGeneratedNever();
+
         builder.Property(rli => rli.ReadingListId)
             .IsRequired();
 

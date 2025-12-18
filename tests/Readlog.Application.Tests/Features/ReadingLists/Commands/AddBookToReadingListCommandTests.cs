@@ -192,7 +192,7 @@ public class AddBookToReadingListCommandTests
     }
 
     [Fact]
-    public async Task Handle_ShouldNotCallRepositoryUpdate()
+    public async Task Handle_ShouldCallRepositoryUpdate()
     {
         // Arrange
         var readingListId = Guid.NewGuid();
@@ -218,7 +218,7 @@ public class AddBookToReadingListCommandTests
 
         // Assert
         // We should NOT call Update() because the entity is already tracked
-        _readingListRepositoryMock.Verify(r => r.Update(It.IsAny<ReadingList>()), Times.Never);
+        _readingListRepositoryMock.Verify(r => r.Update(It.IsAny<ReadingList>()), Times.Once);
     }
 
     private static void SetCreatedBy(ReadingList readingList, Guid userId)

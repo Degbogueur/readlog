@@ -45,7 +45,7 @@ public sealed class RemoveBookFromReadingListCommandHandler(
 
         readingList.RemoveBook(request.BookId);
 
-        //readingListRepository.Update(readingList);
+        readingListRepository.Update(readingList);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         var response = new ReadingListResponse(

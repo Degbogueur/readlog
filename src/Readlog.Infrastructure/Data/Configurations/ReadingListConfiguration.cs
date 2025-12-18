@@ -12,6 +12,9 @@ public class ReadingListConfiguration : IEntityTypeConfiguration<ReadingList>
 
         builder.HasKey(rl => rl.Id);
 
+        builder.Property(rl => rl.Id)
+            .ValueGeneratedNever();
+
         builder.Property(rl => rl.Name)
             .IsRequired()
             .HasMaxLength(100);

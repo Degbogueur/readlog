@@ -48,7 +48,7 @@ public sealed class UpdateBookStatusCommandHandler(
 
         readingList.UpdateBookStatus(request.BookId, request.Status);
 
-        //readingListRepository.Update(readingList);
+        readingListRepository.Update(readingList);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         var response = new ReadingListResponse(

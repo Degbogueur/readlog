@@ -3,7 +3,6 @@ using Readlog.Application.Abstractions;
 using Readlog.Application.Features.ReadingLists.DTOs;
 using Readlog.Application.Shared;
 using Readlog.Domain.Abstractions;
-using Readlog.Domain.Entities;
 using Readlog.Domain.Enums;
 
 namespace Readlog.Application.Features.ReadingLists.Commands;
@@ -56,7 +55,7 @@ public sealed class AddBookToReadingListCommandHandler(
 
         readingList.AddBook(request.BookId, request.Status);
 
-        //readingListRepository.Update(readingList);
+        readingListRepository.Update(readingList);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         var response = new ReadingListResponse(

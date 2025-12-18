@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Readlog.Domain.Entities;
-using Readlog.Domain.ValueObjects;
 
 namespace Readlog.Infrastructure.Data.Configurations;
 
@@ -12,6 +11,9 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
         builder.ToTable("Books");
 
         builder.HasKey(b => b.Id);
+
+        builder.Property(b => b.Id)
+            .ValueGeneratedNever();
 
         builder.Property(b => b.Title)
             .IsRequired()
