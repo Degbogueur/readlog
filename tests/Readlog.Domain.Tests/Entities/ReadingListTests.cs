@@ -184,7 +184,7 @@ public class ReadingListTests
     }
 
     [Fact]
-    public void AddBook_WithDuplicateBookId_ShouldThrowDomainException()
+    public void AddBook_WithDuplicateBookId_ShouldThrowConflictException()
     {
         // Arrange
         var readingList = ReadingList.Create("My List");
@@ -195,7 +195,7 @@ public class ReadingListTests
         var act = () => readingList.AddBook(bookId);
 
         // Assert
-        act.Should().Throw<DomainException>()
+        act.Should().Throw<ConflictException>()
             .WithMessage("This book is already in the reading list.");
     }
 
@@ -233,7 +233,7 @@ public class ReadingListTests
     }
 
     [Fact]
-    public void RemoveBook_WithNonExistingBookId_ShouldThrowDomainException()
+    public void RemoveBook_WithNonExistingBookId_ShouldThrowNotFoundException()
     {
         // Arrange
         var readingList = ReadingList.Create("My List");
@@ -243,7 +243,7 @@ public class ReadingListTests
         var act = () => readingList.RemoveBook(bookId);
 
         // Assert
-        act.Should().Throw<DomainException>()
+        act.Should().Throw<NotFoundException>()
             .WithMessage("Book not found in this reading list.");
     }
 
@@ -282,7 +282,7 @@ public class ReadingListTests
     }
 
     [Fact]
-    public void UpdateBookStatus_WithNonExistingBookId_ShouldThrowDomainException()
+    public void UpdateBookStatus_WithNonExistingBookId_ShouldThrowNotFoundException()
     {
         // Arrange
         var readingList = ReadingList.Create("My List");
@@ -292,7 +292,7 @@ public class ReadingListTests
         var act = () => readingList.UpdateBookStatus(bookId, ReadingStatus.Finished);
 
         // Assert
-        act.Should().Throw<DomainException>()
+        act.Should().Throw<NotFoundException>()
             .WithMessage("Book not found in this reading list.");
     }
 }

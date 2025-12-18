@@ -8,14 +8,22 @@ namespace Readlog.Application.Features.ReadingLists.Queries;
 public sealed record GetReadingListByIdQuery(Guid Id) : IQuery<ReadingListResponse>;
 
 public sealed class GetReadingListByIdQueryHandler(
-    IReadingListRepository readingListRepository) : IQueryHandler<GetReadingListByIdQuery, ReadingListResponse>
+    IReadingListRepository readingListRepository,
+    ICurrentUserService currentUserService) : IQueryHandler<GetReadingListByIdQuery, ReadingListResponse>
 {
     public async Task<Result<ReadingListResponse>> Handle(GetReadingListByIdQuery request, CancellationToken cancellationToken)
     {
         var readingList = await readingListRepository.GetByIdAsync(request.Id, cancellationToken);
 
         if (readingList is null)
-            return Result.Failure<ReadingListResponse>(Error.NotFound("Reading list", request.Id));
+            return Result.Failure<ReadingListResponse>(
+                Error.NotFound("Reading list", request.Id));
+
+        var userId = currentUserService.UserId;
+
+        if (readingList.CreatedBy != userId)
+            return Result.Failure<ReadingListResponse>(
+                Error.Unauthorized("You can only access your own reading lists"));
 
         var items = readingList.Items.Select(item => new ReadingListItemResponse(
             item.Id,

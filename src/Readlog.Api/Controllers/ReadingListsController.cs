@@ -64,11 +64,8 @@ public class ReadingListsController(
     {
         var command = new RenameReadingListCommand(id, request.Name);
         var result = await sender.Send(command, cancellationToken);
-
-        if (result.IsFailure)
-            return result.ToActionResult();
-
-        return NoContent();
+        
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}")]

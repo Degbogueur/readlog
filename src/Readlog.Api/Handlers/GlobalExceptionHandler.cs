@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Readlog.Domain.Exceptions;
 
 namespace Readlog.Api.Handlers;
@@ -15,7 +16,8 @@ public class GlobalExceptionHandler(
         var problemDetails = exception switch
         {
             FluentValidation.ValidationException validationException => CreateValidationProblemDetails(validationException),
-            BaseException baseException => CreateDomainProblemDetails(baseException),
+            //DbUpdateException => CreateDbUpdateProblemDetails(),
+            BaseException baseException => CreateBaseExceptionProblemDetails(baseException),
             _ => CreateServerErrorProblemDetails()
         };
 
@@ -49,13 +51,30 @@ public class GlobalExceptionHandler(
         };
     }
 
-    private static ProblemDetails CreateDomainProblemDetails(BaseException exception)
+    private static ProblemDetails CreateBaseExceptionProblemDetails(BaseException exception)
+    {
+        var (status, title) = exception switch
+        {
+            ConflictException => (StatusCodes.Status409Conflict, "Conflict"),
+            NotFoundException => (StatusCodes.Status404NotFound, "Not Found"),
+            _ => (StatusCodes.Status400BadRequest, "Domain Error")
+        };
+
+        return new ProblemDetails
+        {
+            Status = status,
+            Title = title,
+            Detail = exception.Message
+        };
+    }
+
+    private static ProblemDetails CreateDbUpdateProblemDetails()
     {
         return new ProblemDetails
         {
-            Status = StatusCodes.Status400BadRequest,
-            Title = "Domain Error",
-            Detail = exception.Message
+            Status = StatusCodes.Status409Conflict,
+            Title = "Database Error",
+            Detail = "A database constraint was violated."
         };
     }
 

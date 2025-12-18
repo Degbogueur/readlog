@@ -5,7 +5,9 @@ namespace Readlog.Domain.ValueObjects;
 
 public sealed partial class ISBN
 {
-    public string Value { get; }
+    public string Value { get; } = null!;
+
+    private ISBN() { }
 
     private ISBN(string value)
     {

@@ -3,6 +3,6 @@
 public sealed record CreateBookRequest(
     string Title,
     string Author,
-    string? Isbn,
-    string? Description,
-    DateOnly? PublishedDate);
+    string? Isbn = null,
+    string? Description = null,
+    DateOnly? PublishedDate = null);

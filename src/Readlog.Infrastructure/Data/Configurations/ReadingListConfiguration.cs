@@ -30,7 +30,7 @@ public class ReadingListConfiguration : IEntityTypeConfiguration<ReadingList>
 
         builder.HasMany(rl => rl.Items)
             .WithOne()
-            .HasForeignKey("ReadingListId")
+            .HasForeignKey(rli => rli.ReadingListId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Navigation(rl => rl.Items)

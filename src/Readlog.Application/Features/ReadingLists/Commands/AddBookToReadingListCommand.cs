@@ -2,6 +2,7 @@
 using Readlog.Application.Abstractions;
 using Readlog.Application.Shared;
 using Readlog.Domain.Abstractions;
+using Readlog.Domain.Entities;
 using Readlog.Domain.Enums;
 
 namespace Readlog.Application.Features.ReadingLists.Commands;

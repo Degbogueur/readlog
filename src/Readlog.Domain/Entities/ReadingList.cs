@@ -43,16 +43,16 @@ public sealed class ReadingList : AggregateRoot, IAuditable, ISoftDeletable
     public void AddBook(Guid bookId, ReadingStatus status = ReadingStatus.WantToRead)
     {
         if (_items.Any(i => i.BookId == bookId))
-            throw new DomainException("This book is already in the reading list.");
+            throw new ConflictException("This book is already in the reading list.");
 
-        _items.Add(ReadingListItem.Create(bookId, status));
+        _items.Add(ReadingListItem.Create(Id, bookId, status));
         AddDomainEvent(new BookAddedToListEvent(Id, bookId));
     }
 
     public void RemoveBook(Guid bookId)
     {
         var item = _items.FirstOrDefault(i => i.BookId == bookId)
-            ?? throw new DomainException("Book not found in this reading list.");
+            ?? throw new NotFoundException("Book not found in this reading list.");
 
         _items.Remove(item);
     }
@@ -60,7 +60,7 @@ public sealed class ReadingList : AggregateRoot, IAuditable, ISoftDeletable
     public void UpdateBookStatus(Guid bookId, ReadingStatus newStatus)
     {
         var item = _items.FirstOrDefault(i => i.BookId == bookId)
-            ?? throw new DomainException("Book not found in this reading list.");
+            ?? throw new NotFoundException("Book not found in this reading list.");
 
         item.UpdateStatus(newStatus);
     }

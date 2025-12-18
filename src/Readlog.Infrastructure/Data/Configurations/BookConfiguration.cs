@@ -21,11 +21,12 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
             .IsRequired()
             .HasMaxLength(150);
 
-        builder.Property(b => b.Isbn)
-            .HasConversion(
-                isbn => isbn != null ? isbn.Value : null,
-                value => value != null ? ISBN.CreateOrDefault(value) : null)
-            .HasMaxLength(13);
+        builder.OwnsOne(b => b.Isbn, owned =>
+        {
+            owned.Property(i => i.Value)
+                .HasColumnName("Isbn")
+                .HasMaxLength(13);
+        });
 
         builder.Property(b => b.Description)
             .HasMaxLength(2000);
