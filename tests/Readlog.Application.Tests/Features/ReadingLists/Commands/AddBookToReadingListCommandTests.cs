@@ -30,7 +30,7 @@ public class AddBookToReadingListCommandTests
     }
 
     [Fact]
-    public async Task Handle_WithValidData_ShouldReturnSuccess()
+    public async Task Handle_WithValidData_ShouldReturnSuccessWithReadingList()
     {
         // Arrange
         var readingListId = Guid.NewGuid();
@@ -56,6 +56,9 @@ public class AddBookToReadingListCommandTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeNull();
+        result.Value.Items.Should().HaveCount(1);
+        result.Value.Items[0].BookId.Should().Be(bookId);
     }
 
     [Fact]
@@ -186,6 +189,36 @@ public class AddBookToReadingListCommandTests
 
         // Assert
         _unitOfWorkMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_ShouldNotCallRepositoryUpdate()
+    {
+        // Arrange
+        var readingListId = Guid.NewGuid();
+        var bookId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
+
+        var readingList = ReadingList.Create("My List");
+        SetCreatedBy(readingList, userId);
+        var book = Book.Create("Title", "Author");
+
+        _readingListRepositoryMock
+            .Setup(r => r.GetByIdAsync(readingListId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(readingList);
+        _bookRepositoryMock
+            .Setup(r => r.GetByIdAsync(bookId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(book);
+        _currentUserServiceMock.Setup(s => s.UserId).Returns(userId);
+
+        var command = new AddBookToReadingListCommand(readingListId, bookId);
+
+        // Act
+        await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        // We should NOT call Update() because the entity is already tracked
+        _readingListRepositoryMock.Verify(r => r.Update(It.IsAny<ReadingList>()), Times.Never);
     }
 
     private static void SetCreatedBy(ReadingList readingList, Guid userId)

@@ -12,7 +12,6 @@ public class ReviewRepository(
 {
     private static readonly Dictionary<string, Expression<Func<Review, object>>> SortMappings = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["rating"] = r => r.Rating.Value,
         ["title"] = r => r.Title,
         ["createdAt"] = r => r.CreatedAt
     };
@@ -36,11 +35,20 @@ public class ReviewRepository(
 
         var totalCount = await query.CountAsync(cancellationToken);
 
-        query = query.ApplySort(
-            sortBy,
-            sortDescending,
-            SortMappings,
-            r => r.CreatedAt);
+        if (!string.IsNullOrWhiteSpace(sortBy) && sortBy.Equals("rating", StringComparison.OrdinalIgnoreCase))
+        {
+            query = sortDescending
+                ? query.OrderByDescending(r => EF.Property<int>(r, "Rating"))
+                : query.OrderBy(r => EF.Property<int>(r, "Rating"));
+        }
+        else
+        {
+            query = query.ApplySort(
+                sortBy,
+                sortDescending,
+                SortMappings,
+                r => r.CreatedAt);
+        }            
 
         var items = await query
             .ApplyPagination(page, pageSize)
