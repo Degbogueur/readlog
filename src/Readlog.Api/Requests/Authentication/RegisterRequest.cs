@@ -1,8 +1,8 @@
 ﻿namespace Readlog.Api.Requests.Authentication;
 
 public sealed record RegisterRequest(
-    string Email,
     string UserName,
+    string Email,
     string Password,
-    string? FirstName,
-    string? LastName);
+    string? FirstName = null,
+    string? LastName = null);

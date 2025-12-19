@@ -24,16 +24,16 @@ public class AuthenticationService(
     private readonly JwtSettings jwtSettings = jwtSettings.Value;
 
     public async Task<AuthenticationResult> RegisterAsync(
-        string email,
         string userName,
+        string email,
         string password,
-        string? firstName,
-        string? lastName)
+        string? firstName = null,
+        string? lastName = null)
     {
         var user = new ApplicationUser
         {
-            Email = email,
             UserName = userName,
+            Email = email,
             FirstName = firstName,
             LastName = lastName
         };
@@ -41,10 +41,22 @@ public class AuthenticationService(
         var result = await userManager.CreateAsync(user, password);
 
         if (!result.Succeeded)
-            return AuthenticationResult.Failure(
-                result.Errors.Select(e => e.Description).ToArray());
+        {
+            var errorType = result.Errors.Any(e =>
+                e.Code.Contains("Duplicate", StringComparison.OrdinalIgnoreCase))
+                ? AuthErrorType.Conflict
+                : AuthErrorType.Validation;
 
-        return await GenerateAuthenticationResultAsync(user);
+            return AuthenticationResult.Failure(
+                result.Errors.Select(e => e.Description).ToArray(),
+                errorType);
+        }
+        
+        var authResult = await GenerateAuthenticationResultAsync(user);
+
+        await unitOfWork.SaveChangesAsync();
+
+        return authResult;
     }
 
     public async Task<AuthenticationResult> LoginAsync(string emailOrUserName, string password)
@@ -53,14 +65,22 @@ public class AuthenticationService(
             ?? await userManager.FindByNameAsync(emailOrUserName);
 
         if (user is null)
-            return AuthenticationResult.Failure("Invalid email or password.");
+            return AuthenticationResult.Failure(
+                "Invalid email or password.",
+                AuthErrorType.Unauthorized);
 
         var isValidPassword = await userManager.CheckPasswordAsync(user, password);
 
         if (!isValidPassword)
-            return AuthenticationResult.Failure("Invalid email or password.");
+            return AuthenticationResult.Failure(
+                "Invalid email or password.",
+                AuthErrorType.Unauthorized);
 
-        return await GenerateAuthenticationResultAsync(user);
+        var authResult = await GenerateAuthenticationResultAsync(user);
+
+        await unitOfWork.SaveChangesAsync();
+
+        return authResult;
     }
 
     public async Task<AuthenticationResult> RefreshTokenAsync(string refreshToken)
@@ -68,21 +88,25 @@ public class AuthenticationService(
         var storedToken = await refreshTokenRepository.GetByTokenAsync(refreshToken);
 
         if (storedToken is null || !storedToken.IsActive)
-            return AuthenticationResult.Failure("Invalid or expired refresh token.");
+            return AuthenticationResult.Failure(
+                "Invalid or expired refresh token.",
+                AuthErrorType.Unauthorized);
 
         var user = await userManager.FindByIdAsync(storedToken.UserId.ToString());
 
         if (user is null)
-            return AuthenticationResult.Failure("User not found.");
+            return AuthenticationResult.Failure(
+                "User not found.",
+                AuthErrorType.Unauthorized);
 
         storedToken.Revoke();
         refreshTokenRepository.Update(storedToken);
 
-        var result = await GenerateAuthenticationResultAsync(user);
+        var authResult = await GenerateAuthenticationResultAsync(user);
 
         await unitOfWork.SaveChangesAsync();
 
-        return result;
+        return authResult;
     }
 
     public async Task<bool> RevokeTokenAsync(string refreshToken)

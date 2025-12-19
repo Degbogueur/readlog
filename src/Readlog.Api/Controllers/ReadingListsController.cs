@@ -56,7 +56,7 @@ public class ReadingListsController(
     }
 
     [HttpPut("{id:guid}/rename")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ReadingListResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
@@ -65,10 +65,7 @@ public class ReadingListsController(
         var command = new RenameReadingListCommand(id, request.Name);
         var result = await sender.Send(command, cancellationToken);
 
-        if (result.IsFailure)
-            return result.ToActionResult();
-
-        return NoContent();
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}")]
@@ -87,38 +84,33 @@ public class ReadingListsController(
     }
 
     [HttpPost("{id:guid}/books")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ReadingListResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> AddBook(Guid id, [FromBody] AddBookToReadingListRequest request, CancellationToken cancellationToken)
     {
         var command = new AddBookToReadingListCommand(id, request.BookId, request.Status);
         var result = await sender.Send(command, cancellationToken);
 
-        if (result.IsFailure)
-            return result.ToActionResult();
-
-        return NoContent();
+        return result.ToActionResult();
     }
 
     [HttpDelete("{id:guid}/books/{bookId:guid}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ReadingListResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> RemoveBook(Guid id, Guid bookId, CancellationToken cancellationToken)
     {
         var command = new RemoveBookFromReadingListCommand(id, bookId);
         var result = await sender.Send(command, cancellationToken);
-
-        if (result.IsFailure)
-            return result.ToActionResult();
-
-        return NoContent();
+        
+        return result.ToActionResult();
     }
 
     [HttpPut("{id:guid}/books/{bookId:guid}/status")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ReadingListResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
@@ -126,10 +118,7 @@ public class ReadingListsController(
     {
         var command = new UpdateBookStatusCommand(id, bookId, request.Status);
         var result = await sender.Send(command, cancellationToken);
-
-        if (result.IsFailure)
-            return result.ToActionResult();
-
-        return NoContent();
+        
+        return result.ToActionResult();
     }
 }

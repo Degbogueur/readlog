@@ -5,11 +5,11 @@ namespace Readlog.Application.Abstractions;
 public interface IAuthenticationService
 {
     Task<AuthenticationResult> RegisterAsync(
-        string email,
         string userName,
+        string email,
         string password,
-        string? firstName,
-        string? lastName);
+        string? firstName = null,
+        string? lastName = null);
 
     Task<AuthenticationResult> LoginAsync(
         string emailOrUserName,

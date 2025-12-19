@@ -12,16 +12,23 @@ public class ReadingListItemConfiguration : IEntityTypeConfiguration<ReadingList
 
         builder.HasKey(rli => rli.Id);
 
+        builder.Property(rli => rli.Id)
+            .ValueGeneratedNever();
+
+        builder.Property(rli => rli.ReadingListId)
+            .IsRequired();
+
         builder.Property(rli => rli.BookId)
             .IsRequired();
 
         builder.Property(rli => rli.Status)
-            .HasConversion<string>()
-            .IsRequired();
+            .IsRequired()
+            .HasConversion<string>();
 
         builder.Property(rli => rli.AddedAt)
             .IsRequired();
 
-        builder.HasIndex(rli => rli.BookId);
+        builder.HasIndex(rli => new { rli.ReadingListId, rli.BookId })
+            .IsUnique();
     }
 }

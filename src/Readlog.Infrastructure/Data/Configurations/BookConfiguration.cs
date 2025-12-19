@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Readlog.Domain.Entities;
-using Readlog.Domain.ValueObjects;
 
 namespace Readlog.Infrastructure.Data.Configurations;
 
@@ -13,6 +12,9 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
 
         builder.HasKey(b => b.Id);
 
+        builder.Property(b => b.Id)
+            .ValueGeneratedNever();
+
         builder.Property(b => b.Title)
             .IsRequired()
             .HasMaxLength(200);
@@ -21,11 +23,12 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
             .IsRequired()
             .HasMaxLength(150);
 
-        builder.Property(b => b.Isbn)
-            .HasConversion(
-                isbn => isbn != null ? isbn.Value : null,
-                value => value != null ? ISBN.CreateOrDefault(value) : null)
-            .HasMaxLength(13);
+        builder.OwnsOne(b => b.Isbn, owned =>
+        {
+            owned.Property(i => i.Value)
+                .HasColumnName("Isbn")
+                .HasMaxLength(13);
+        });
 
         builder.Property(b => b.Description)
             .HasMaxLength(2000);

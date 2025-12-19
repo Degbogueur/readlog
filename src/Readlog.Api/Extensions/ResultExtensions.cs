@@ -29,14 +29,14 @@ public static class ResultExtensions
         return ToProblemResult(result.Error);
     }
 
-    private static IActionResult ToProblemResult(Error error)
+    private static ObjectResult ToProblemResult(Error error)
     {
         var (statusCode, title) = error.Code switch
         {
             var code when code.Contains("NotFound") => (StatusCodes.Status404NotFound, "Not Found"),
             var code when code.Contains("Validation") => (StatusCodes.Status400BadRequest, "Validation Error"),
-            var code when code.Contains("Conflict") => (StatusCodes.Status401Unauthorized, "Conflict"),
-            var code when code.Contains("Unauthorized") => (StatusCodes.Status404NotFound, "Unauthorized"),
+            var code when code.Contains("Conflict") => (StatusCodes.Status409Conflict, "Conflict"),
+            var code when code.Contains("Unauthorized") => (StatusCodes.Status401Unauthorized, "Unauthorized"),
             _ => (StatusCodes.Status400BadRequest, "Bad Request")
         };
 

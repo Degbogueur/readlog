@@ -185,10 +185,6 @@ namespace Readlog.Infrastructure.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<string>("Isbn")
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
-
                     b.Property<DateOnly?>("PublishedDate")
                         .HasColumnType("date");
 
@@ -267,7 +263,7 @@ namespace Readlog.Infrastructure.Data.Migrations
                     b.Property<Guid>("BookId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ReadingListId")
+                    b.Property<Guid>("ReadingListId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Status")
@@ -276,9 +272,8 @@ namespace Readlog.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookId");
-
-                    b.HasIndex("ReadingListId");
+                    b.HasIndex("ReadingListId", "BookId")
+                        .IsUnique();
 
                     b.ToTable("ReadingListItems", (string)null);
                 });
@@ -509,12 +504,37 @@ namespace Readlog.Infrastructure.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Readlog.Domain.Entities.Book", b =>
+                {
+                    b.OwnsOne("Readlog.Domain.ValueObjects.ISBN", "Isbn", b1 =>
+                        {
+                            b1.Property<Guid>("BookId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(13)
+                                .HasColumnType("nvarchar(13)")
+                                .HasColumnName("Isbn");
+
+                            b1.HasKey("BookId");
+
+                            b1.ToTable("Books");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BookId");
+                        });
+
+                    b.Navigation("Isbn");
+                });
+
             modelBuilder.Entity("Readlog.Domain.Entities.ReadingListItem", b =>
                 {
                     b.HasOne("Readlog.Domain.Entities.ReadingList", null)
                         .WithMany("Items")
                         .HasForeignKey("ReadingListId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Readlog.Domain.Entities.ReadingList", b =>

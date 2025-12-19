@@ -12,6 +12,9 @@ public class ReadingListConfiguration : IEntityTypeConfiguration<ReadingList>
 
         builder.HasKey(rl => rl.Id);
 
+        builder.Property(rl => rl.Id)
+            .ValueGeneratedNever();
+
         builder.Property(rl => rl.Name)
             .IsRequired()
             .HasMaxLength(100);
@@ -30,7 +33,7 @@ public class ReadingListConfiguration : IEntityTypeConfiguration<ReadingList>
 
         builder.HasMany(rl => rl.Items)
             .WithOne()
-            .HasForeignKey("ReadingListId")
+            .HasForeignKey(rli => rli.ReadingListId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Navigation(rl => rl.Items)
