@@ -1,3 +1,12 @@
-﻿namespace Readlog.Api.Requests.ReadingLists;
+﻿using System.ComponentModel.DataAnnotations;
 
-public sealed record RenameReadingListRequest(string Name);
+namespace Readlog.Api.Requests.ReadingLists;
+
+/// <summary>
+/// Request to rename an existing reading list
+/// </summary>
+/// <param name="Name">New reading list name (required, max 100 characters)</param>
+public sealed record RenameReadingListRequest(
+    [Required]
+    [StringLength(100, MinimumLength = 1)]
+    string Name);

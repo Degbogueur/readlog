@@ -38,7 +38,7 @@ public sealed class RenameReadingListCommandHandler(
 
         if (readingList.CreatedBy != userId)
             return Result.Failure<ReadingListResponse>(
-                Error.Unauthorized("You can only modify your own reading lists."));
+                Error.Forbidden("You can only modify your own reading lists."));
 
         readingList.Rename(request.Name);
 

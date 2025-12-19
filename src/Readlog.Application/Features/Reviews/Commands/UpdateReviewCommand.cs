@@ -47,7 +47,7 @@ public sealed class UpdateReviewCommandHandler(
         var userId = currentUserService.UserId;
 
         if (review.CreatedBy != userId)
-            return Result.Failure<ReviewResponse>(Error.Unauthorized("You can only update your own reviews."));
+            return Result.Failure<ReviewResponse>(Error.Forbidden("You can only update your own reviews."));
 
         review.Update(request.Rating, request.Title, request.Content);
 

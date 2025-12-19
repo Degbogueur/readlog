@@ -45,7 +45,7 @@ public sealed class AddBookToReadingListCommandHandler(
 
         if (readingList.CreatedBy != userId)
             return Result.Failure<ReadingListResponse>(
-                Error.Unauthorized("You can only modify your own reading lists."));
+                Error.Forbidden("You can only modify your own reading lists."));
 
         var book = await bookRepository.GetByIdAsync(request.BookId, cancellationToken);
 

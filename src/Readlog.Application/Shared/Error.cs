@@ -17,4 +17,7 @@ public sealed record Error(string Code, string Message)
 
     public static Error Unauthorized(string message = "Unauthorized access.") =>
         new("Unauthorized.Error", message);
+
+    public static Error Forbidden(string message = "Forbidden access.") =>
+        new("Forbidden.Error", message);
 }

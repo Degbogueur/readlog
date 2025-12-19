@@ -138,7 +138,7 @@ public class ReadingListsControllerTests(IntegrationTestFixture fixture) : IAsyn
         var response = await authenticatedClient.GetAsync($"/api/reading-lists/{created!.Id}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     [Fact]
@@ -229,7 +229,7 @@ public class ReadingListsControllerTests(IntegrationTestFixture fixture) : IAsyn
             $"/api/reading-lists/{list!.Id}/books", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     [Fact]
@@ -339,6 +339,6 @@ public class ReadingListsControllerTests(IntegrationTestFixture fixture) : IAsyn
         var response = await authenticatedClient.DeleteAsync($"/api/reading-lists/{list!.Id}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 }

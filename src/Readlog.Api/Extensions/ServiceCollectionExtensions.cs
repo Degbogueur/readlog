@@ -7,6 +7,7 @@ using Readlog.Infrastructure.Data;
 using Readlog.Infrastructure.Identity;
 using Readlog.Infrastructure.Repositories;
 using Readlog.Infrastructure.Services;
+using System.Reflection;
 using System.Text;
 
 namespace Readlog.Api.Extensions;
@@ -65,6 +66,7 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddSwagger(this IServiceCollection services)
     {
+        services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc("v1", new OpenApiInfo
@@ -81,7 +83,11 @@ public static class ServiceCollectionExtensions
                 Scheme = "Bearer",
                 BearerFormat = "JWT",
                 In = ParameterLocation.Header,
-                Description = "Enter your JWT token"
+                Description = """                    
+                    Enter your token below (without 'Bearer ' prefix).
+                    
+                    Example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                    """
             });
 
             options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -98,8 +104,15 @@ public static class ServiceCollectionExtensions
                     Array.Empty<string>()
                 }
             });
-        });
 
+            var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFileName);
+            if (File.Exists(xmlPath))
+            {
+                options.IncludeXmlComments(xmlPath);
+            }
+        });
+        
         return services;
     }
 }

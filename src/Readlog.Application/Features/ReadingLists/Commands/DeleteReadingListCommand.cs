@@ -31,7 +31,7 @@ public sealed class DeleteReadingListCommandHandler(
         var userId = currentUserService.UserId;
 
         if (readingList.CreatedBy != userId)
-            return Result.Failure(Error.Unauthorized("You can only delete your own reading lists."));
+            return Result.Failure(Error.Forbidden("You can only delete your own reading lists."));
 
         readingListRepository.Delete(readingList);
         await unitOfWork.SaveChangesAsync(cancellationToken);

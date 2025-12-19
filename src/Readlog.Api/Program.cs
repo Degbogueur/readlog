@@ -31,14 +31,7 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
-
 app.UseSwagger();
-app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
@@ -52,8 +45,6 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
 }
-
-// Après les middlewares, avant app.Run()
 
 app.MapGet("/", () => Results.Content("""
 <!DOCTYPE html>
