@@ -1,7 +1,9 @@
+using Microsoft.EntityFrameworkCore;
 using Readlog.Api.Extensions;
 using Readlog.Api.Handlers;
 using Readlog.Application;
 using Readlog.Infrastructure;
+using Readlog.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +43,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
 
 app.Run();
 

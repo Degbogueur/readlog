@@ -217,7 +217,6 @@ public class AddBookToReadingListCommandTests
         await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        // We should NOT call Update() because the entity is already tracked
         _readingListRepositoryMock.Verify(r => r.Update(It.IsAny<ReadingList>()), Times.Once);
     }
 
