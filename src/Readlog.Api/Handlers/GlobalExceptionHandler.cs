@@ -16,7 +16,7 @@ public class GlobalExceptionHandler(
         var problemDetails = exception switch
         {
             FluentValidation.ValidationException validationException => CreateValidationProblemDetails(validationException),
-            //DbUpdateException => CreateDbUpdateProblemDetails(),
+            DbUpdateException => CreateDbUpdateProblemDetails(),
             BaseException baseException => CreateBaseExceptionProblemDetails(baseException),
             _ => CreateServerErrorProblemDetails()
         };

@@ -3,7 +3,6 @@ using Readlog.Application.Abstractions;
 using Readlog.Application.Features.Books.DTOs;
 using Readlog.Application.Shared;
 using Readlog.Domain.Abstractions;
-using Readlog.Domain.Entities;
 
 namespace Readlog.Application.Features.Books.Commands;
 

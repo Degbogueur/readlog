@@ -37,6 +37,7 @@ public static class ResultExtensions
             var code when code.Contains("Validation") => (StatusCodes.Status400BadRequest, "Validation Error"),
             var code when code.Contains("Conflict") => (StatusCodes.Status409Conflict, "Conflict"),
             var code when code.Contains("Unauthorized") => (StatusCodes.Status401Unauthorized, "Unauthorized"),
+            var code when code.Contains("Forbidden") => (StatusCodes.Status403Forbidden, "Forbidden"),
             _ => (StatusCodes.Status400BadRequest, "Bad Request")
         };
 

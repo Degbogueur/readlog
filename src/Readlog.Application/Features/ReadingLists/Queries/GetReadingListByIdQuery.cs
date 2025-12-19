@@ -23,7 +23,7 @@ public sealed class GetReadingListByIdQueryHandler(
 
         if (readingList.CreatedBy != userId)
             return Result.Failure<ReadingListResponse>(
-                Error.Unauthorized("You can only access your own reading lists"));
+                Error.Forbidden("You can only access your own reading lists"));
 
         var items = readingList.Items.Select(item => new ReadingListItemResponse(
             item.Id,

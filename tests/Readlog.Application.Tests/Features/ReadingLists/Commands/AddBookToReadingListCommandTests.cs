@@ -100,7 +100,7 @@ public class AddBookToReadingListCommandTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.Code.Should().Contain("Unauthorized");
+        result.Error.Code.Should().Contain("Forbidden");
     }
 
     [Fact]

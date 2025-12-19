@@ -198,7 +198,7 @@ public class ReviewsControllerTests(IntegrationTestFixture fixture) : IAsyncLife
             $"/api/books/{bookId}/reviews/{review!.Id}", updateRequest);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     [Fact]

@@ -1,3 +1,11 @@
-﻿namespace Readlog.Api.Requests.Authentication;
+﻿using System.ComponentModel.DataAnnotations;
 
-public sealed record RevokeTokenRequest(string RefreshToken);
+namespace Readlog.Api.Requests.Authentication;
+
+/// <summary>
+/// Request to revoke a refresh token (logout)
+/// </summary>
+/// <param name="RefreshToken">Refresh token to revoke</param>
+public sealed record RevokeTokenRequest(
+    [Required]
+    string RefreshToken);

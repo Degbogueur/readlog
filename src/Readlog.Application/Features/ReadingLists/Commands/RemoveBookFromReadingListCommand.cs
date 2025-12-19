@@ -41,7 +41,7 @@ public sealed class RemoveBookFromReadingListCommandHandler(
 
         if (readingList.CreatedBy != userId)
             return Result.Failure<ReadingListResponse>(
-                Error.Unauthorized("You can only modify your own reading lists."));
+                Error.Forbidden("You can only modify your own reading lists."));
 
         readingList.RemoveBook(request.BookId);
 
